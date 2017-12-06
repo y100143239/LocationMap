@@ -71,6 +71,13 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
         this._loader = PIXI.loader;
 
         /**
+         * @description 进度条容器
+         * @type {PIXI.Container}
+         * @private
+         */
+        this._progress = null;
+
+        /**
          * @description 进度条
          * @type {PIXI.Graphics}
          * @private
@@ -98,7 +105,7 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
         this._loadResources();
 
         // 创建场景
-        this._createScene();
+        // this._createScene();
 
         // 动画
         this._animate();
@@ -180,7 +187,8 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
                         _this._setProgress( progress / 100, "加载：" + name );
                     }, count++ * 60 );
                 }( loader.progress, resource.name );
-            });
+            })
+            .load();
     };
 
     /**
@@ -219,6 +227,8 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
             // progressbar.endFill();
             progressContainer.addChild(progressbar);
 
+            this._progress = progressContainer;
+
             this._progressbar = progressbar;
 
             this._progressMsg = new PIXI.Text( "加载...", {
@@ -242,11 +252,16 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
     Scene.prototype._setProgress = function ( percentage, msg ) {
         var
             width,
-            progressbar
+            progressbar,
+            _this = this
         ;
         if ( percentage > 1 ) {
             percentage = 1;
             msg = "加载完毕！";
+            setTimeout( function () {
+                _this._progress.visible = false;
+                _this._createScene();
+            }, 100 );
         }
         progressbar = this._progressbar;
         width = 200 * percentage;
@@ -264,9 +279,13 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
      * @private
      */
     Scene.prototype._createScene = function () {
-        this._loader.load( function () {
-
-        } );
+        var
+            stage = this.getStage(),
+            resources = PIXI.loader.resources,
+            ground
+        ;
+        ground = new PIXI.Sprite( resources[ "ground" ].texture );
+        stage.addChild( ground )
     };
 
     /**
