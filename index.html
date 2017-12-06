@@ -1,20 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="css/style.scss">
+
     <title>青山分局</title>
-    <script src="js/pixi/4.6.1/pixi.js"></script>
-    <style>
-        #container {
-            width: 760px;
-            height: 820px;
-        }
-    </style>
+
+    <script data-main="js/main" src="lib/requirejs/2.1.22/require.js"></script>
+
+
 </head>
 <body>
 
-    <div id="container"></div>
-    <script src="js/main.js"></script>
+    <div id="container" style="width: 760px; height: 1050px;"
+         data-options='{
+            resources: [
+                { name: "ground", url: "images/scene/ground.png" },
+                { name: "ordinary_man", url: "images/persona/ordinary_man.png" },
+                { name: "ordinary_woman", url: "images/persona/ordinary_woman.png" },
+                { name: "police_man", url: "images/persona/police_man.png" },
+                { name: "police_woman", url: "images/persona/police_woman.png" },
+                { name: "suspect_man", url: "images/persona/suspect_man.png" },
+                { name: "suspect_woman", url: "images/persona/suspect_woman.png" }
+            ]
+         }'></div>
 
 </body>
 </html>
