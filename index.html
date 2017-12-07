@@ -17,15 +17,18 @@
 <body>
 
     <div id="container" style="width: 760px; height: 1050px;"
-         data-options='{
-            resources: [
-                { name: "ground", url: "images/scene/ground.png" },
-                { name: "ordinary_man", url: "images/persona/ordinary_man.png" },
-                { name: "ordinary_woman", url: "images/persona/ordinary_woman.png" },
-                { name: "police_man", url: "images/persona/police_man.png" },
-                { name: "police_woman", url: "images/persona/police_woman.png" },
-                { name: "suspect_man", url: "images/persona/suspect_man.png" },
-                { name: "suspect_woman", url: "images/persona/suspect_woman.png" }
+         data-config-options='{
+            "personInfoListUrl": "./data/personInfoListData.json"
+         }'
+         data-scene-options='{
+            "resources": [
+                { "name": "ground", "url": "images/scene/ground_760x1050_light.png" },
+                { "name": "ordinary_man", "url": "images/character/ordinary_man.png" },
+                { "name": "ordinary_woman", "url": "images/character/ordinary_woman.png" },
+                { "name": "police_man", "url": "images/character/police_man.png" },
+                { "name": "police_woman", "url": "images/character/police_woman.png" },
+                { "name": "suspect_man", "url": "images/character/suspect_man.png" },
+                { "name": "suspect_woman", "url": "images/character/suspect_woman.png" }
             ]
          }'></div>
 

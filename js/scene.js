@@ -1,7 +1,7 @@
 /**
  * @fileOverview 舞台/场景
  */
-define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
+define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI, Config, Character ) {
     "use strict";
 
     /**
@@ -23,17 +23,17 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
             // 地面
             { name: "ground", url: "images/scene/ground.png" },
             // 一般人 - 男
-            { name: "ordinary_man", url: "images/persona/ordinary_man.png" },
+            { name: "ordinary_man", url: "images/character/ordinary_man.png" },
             // 一般人 - 女
-            { name: "ordinary_woman", url: "images/persona/ordinary_woman.png" },
+            { name: "ordinary_woman", url: "images/character/ordinary_woman.png" },
             // 民警 - 男
-            { name: "police_man", url: "images/persona/police_man.png" },
+            { name: "police_man", url: "images/character/police_man.png" },
             // 民警 - 女
-            { name: "police_woman", url: "images/persona/police_woman.png" },
+            { name: "police_woman", url: "images/character/police_woman.png" },
             // 嫌疑人 - 男
-            { name: "suspect_man", url: "images/persona/suspect_man.png" },
+            { name: "suspect_man", url: "images/character/suspect_man.png" },
             // 嫌疑人 - 女
-            { name: "suspect_woman", url: "images/persona/suspect_woman.png" }
+            { name: "suspect_woman", url: "images/character/suspect_woman.png" }
         ]
     };
 
@@ -55,6 +55,13 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
          * @private
          */
         this._stage = null;
+
+        /**
+         * @description 角色容器
+         * @type {PIXI.Container}
+         * @private
+         */
+        this._charactorContainer = null;
 
         /**
          * @description 渲染器
@@ -90,13 +97,16 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
          * @private
          */
         this._progressMsg = null;
+
     };
 
     /**
      * @description 初始化
      * @public
      */
-    Scene.prototype.init = function () {
+    Scene.prototype.init = function ( initedCallback ) {
+
+        this.initedCallback = initedCallback;
 
         // 创建进度条
         this._createProgressbar();
@@ -104,13 +114,136 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
         // 载入资源
         this._loadResources();
 
-        // 创建场景
+        // 创建场景（ _createProgressbar() 执行完毕后创建 ）
         // this._createScene();
 
         // 动画
         this._animate();
     };
 
+    /**
+     * @description 缓存
+     */
+    Scene.prototype.CharacterCache = {
+        /**
+         * @description 保存 Character
+         * @type { {id: Character} }
+         */
+        cache: {
+        },
+
+        /**
+         * @description 将 character 添加到缓存
+         * @param id {String}
+         * @param character {Character}
+         * @return {Character}
+         */
+        set: function ( id, character ) {
+            this.cache[ id ] = character;
+            return this.cache[ id ];
+        },
+        /**
+         * @description 根据指定ID获取 character
+         * @param id {String}
+         * @return {Character}
+         */
+        get: function ( id ) {
+            return this.cache[ id ];
+        },
+        /**
+         * @description 从缓存中删除指定ID的character
+         * @param id {String}
+         */
+        remove: function ( id ) {
+            delete this.cache[ id ];
+        }
+    };
+
+
+    /**
+     * @description 设置定位标签
+     * @param data {{ id: String, x: Number, y: Number, cmd: Number}}
+     */
+    Scene.prototype.setCharacter = function ( data ) {
+
+        switch ( data.cmd ) {
+            // 离开
+            case 0:
+            case 4: {
+                this.destroyCharacter( data );
+                break;
+            }
+            // 创建（第一次出现）
+            case 1: {
+                this.createCharacter( data );
+                break;
+            }
+            // 更新（移动）
+            case 2: {
+                this.updateCharacter( data );
+                break;
+            }
+        }
+    };
+
+    /**
+     * @description 创建 定位标签
+     * @param options {{ id: String, x: Number, y: Number}}
+     */
+    Scene.prototype.createCharacter = function ( options ) {
+        var
+            character
+        ;
+
+        if ( this.CharacterCache.get( options.id ) ) {
+            this.updateCharacter( options );
+            return;
+        }
+        character = new Character( this._charactorContainer, options );
+
+        character.create();
+
+        character.update( options );
+
+        this.CharacterCache.set( options.id, character );
+
+        Config.getPersonInfoList();
+    };
+
+    /**
+     * @description 更新 定位标签
+     * @param options {{ id: String, x: Number, y: Number}}
+     */
+    Scene.prototype.updateCharacter = function ( options ) {
+        var
+            character = this.CharacterCache.get( options.id )
+        ;
+        if ( ! character ) {
+            this.createCharacter( options );
+            return;
+        }
+
+        character.update( options );
+    };
+    /**
+     * @description 销毁
+     * @param options {{ id: String, x: Number, y: Number }}
+     */
+    Scene.prototype.destroyCharacter = function ( options ) {
+        var
+            character = this.CharacterCache.get( options.id )
+        ;
+        if ( ! character ) {
+            console.warn( "【" + options.id + "】不存在！" );
+            return;
+        }
+
+        character.destroy();
+
+        this.CharacterCache.remove( options.id );
+
+        Config.getPersonInfoList();
+    };
     /**
      * @description 获取参数
      * @param options {{}?}
@@ -128,6 +261,7 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
                 }
                 this.options[ propName ] = this.defaults[ propName ];
             }
+
             for ( propName in options ) {
                 if ( ! options.hasOwnProperty( propName ) ) {
                     continue;
@@ -282,10 +416,18 @@ define( [ "../lib/pixi/4.6.1/pixi" ], function ( PIXI ) {
         var
             stage = this.getStage(),
             resources = PIXI.loader.resources,
-            ground
+            ground,
+            charactorContainer
         ;
         ground = new PIXI.Sprite( resources[ "ground" ].texture );
-        stage.addChild( ground )
+        stage.addChild( ground );
+
+        charactorContainer = new PIXI.Container();
+        stage.addChild( charactorContainer );
+
+        this._charactorContainer = charactorContainer;
+
+        this.initedCallback && this.initedCallback();
     };
 
     /**

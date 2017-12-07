@@ -1,0 +1,11 @@
+{
+  "success": true,
+  "data": [
+    { "tagId": "56780", "peopleName": "警察_男", "objtype": "1010/1020","peopleSex":"1" },
+    { "tagId": "56781", "peopleName": "警察_女", "objtype": "1010/1020","peopleSex":"2" },
+    { "tagId": "56782", "peopleName": "嫌疑人_男", "objtype": "2010","peopleSex":"1" },
+    { "tagId": "56783", "peopleName": "嫌疑人_女", "objtype": "2010","peopleSex":"2" },
+    { "tagId": "56786", "peopleName": "一般人_男", "objtype": "2020/2030/9000","peopleSex":"1" },
+    { "tagId": "56787", "peopleName": "一般人_女", "objtype": "2020/2030/9000","peopleSex":"2" }
+  ]
+}
