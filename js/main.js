@@ -1,3 +1,6 @@
+requirejs.config( {
+    waitSeconds: 300
+} );
 /**
  * @fileOverview 入口
  * @author 吴钦飞（wuqinfei@qq.com）
@@ -10,6 +13,12 @@ define( [ "./scene", "./config", "../lib/jquery/2.2.4/jquery" ], function ( Scen
         configOptions,
         $target
     ;
+
+    /** @event click.character 角色被点击事件 */
+    jQuery( document ).on( "click.character", function ( event, personInfo ) {
+        alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
+    } );
+
 
     jQuery( document ).ready( function () {
 

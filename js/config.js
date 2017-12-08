@@ -24,12 +24,12 @@ define( [ "../lib/jquery/2.2.4/jquery" ], function () {
         handlePersonInfoResponse: null, // 见底部代码
 
         typeColor: {
-            police_man: 0x0099cb,
-            police_woman: 0x7eb8f2,
-            suspect_man: 0xcc3431,
-            suspect_woman: 0xff6764,
-            ordinary_man: 0x013300,
-            ordinary_woman: 0x346633
+            police_man: { text: 0xffffff, background: 0x45a9db, border: 0x1d98d7 },
+            police_woman: { text: 0xffffff, background: 0x45a9db, border: 0x1d98d7 },
+            suspect_man: { text: 0xffffff, background: 0xea9439, border: 0xe97e0f },
+            suspect_woman: { text: 0xffffff, background: 0xea9439, border: 0xe97e0f },
+            ordinary_man: { text: 0xffffff, background: 0x999491, border: 0x827d7b },
+            ordinary_woman: { text: 0xffffff, background: 0x999491, border: 0x827d7b }
         },
 
         /** 颜色列表 */
@@ -153,7 +153,7 @@ define( [ "../lib/jquery/2.2.4/jquery" ], function () {
     /**
      * @description 获取颜色
      * @param type { string? }
-     * @return {String}
+     * @return {{ text: number, background: number, border: number }}
      * @public
      */
     Config.getColor = function ( type ) {

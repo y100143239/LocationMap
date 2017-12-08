@@ -1,28 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
 <head>
 
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
 
-    <link rel="stylesheet" href="css/style.scss">
-
     <title>青山分局</title>
 
     <script data-main="js/main" src="lib/requirejs/2.1.22/require.js"></script>
-
+    <style>
+        #container {
+            position: relative;
+            margin: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,.5);
+        }
+        #container > .dg {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    </style>
 
 </head>
 <body>
 
-    <div id="container" style="width: 760px; height: 1050px;"
+    <div id="container"
+         style="width: 760px; height: 1050px;"
          data-config-options='{
             "personInfoListUrl": "./data/personInfoListData.json"
          }'
          data-scene-options='{
             "resources": [
-                { "name": "ground", "url": "images/scene/ground_760x1050_light.png" },
+                { "name": "ground_light", "url": "images/scene/ground_760x1050_light.png" },
+                { "name": "ground_dark", "url": "images/scene/ground_760x1050_dark.png" },
                 { "name": "ordinary_man", "url": "images/character/ordinary_man.png" },
                 { "name": "ordinary_woman", "url": "images/character/ordinary_woman.png" },
                 { "name": "police_man", "url": "images/character/police_man.png" },

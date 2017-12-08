@@ -1,7 +1,15 @@
 /**
  * @fileOverview 舞台/场景
  */
-define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI, Config, Character ) {
+define(
+
+    [
+        "../lib/pixi/4.6.1/pixi",
+        "./config",
+        "./character"
+    ],
+
+function ( PIXI, Config, Character ) {
     "use strict";
 
     /**
@@ -38,10 +46,49 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
     };
 
     /**
+     * @description 缓存
+     */
+    Scene.prototype.CharacterCache = {
+        /**
+         * @description 保存 Character
+         * @type { {id: Character} }
+         */
+        cache: {
+        },
+
+        /**
+         * @description 将 character 添加到缓存
+         * @param id {String}
+         * @param character {Character}
+         * @return {Character}
+         */
+        set: function ( id, character ) {
+            this.cache[ id ] = character;
+            return this.cache[ id ];
+        },
+        /**
+         * @description 根据指定ID获取 character
+         * @param id {String}
+         * @return {Character}
+         */
+        get: function ( id ) {
+            return this.cache[ id ];
+        },
+        /**
+         * @description 从缓存中删除指定ID的character
+         * @param id {String}
+         */
+        remove: function ( id ) {
+            delete this.cache[ id ];
+        }
+    };
+
+    /**
      * @description 声明
      * @private
      */
     Scene.prototype._declare = function () {
+
         /**
          * @description 容器
          * @type {HTMLElement | null}
@@ -49,12 +96,20 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
          */
         this._container = document.getElementById( this.getOptions().targetId );
 
+
         /**
          * @description 根容器
          * @type {PIXI.Container}
          * @private
          */
         this._stage = null;
+
+        /**
+         * @description 地面
+         * @type {PIXI.Sprite}
+         * @private
+         */
+        this._groundSprite = null;
 
         /**
          * @description 角色容器
@@ -104,9 +159,9 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
      * @description 初始化
      * @public
      */
-    Scene.prototype.init = function ( initedCallback ) {
+    Scene.prototype.init = function ( initializedCallback ) {
 
-        this.initedCallback = initedCallback;
+        this.initializedCallback = initializedCallback;
 
         // 创建进度条
         this._createProgressbar();
@@ -116,49 +171,12 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
 
         // 创建场景（ _createProgressbar() 执行完毕后创建 ）
         // this._createScene();
+        // _createScene()执行完毕后执行initializedCallback
 
         // 动画
         this._animate();
+
     };
-
-    /**
-     * @description 缓存
-     */
-    Scene.prototype.CharacterCache = {
-        /**
-         * @description 保存 Character
-         * @type { {id: Character} }
-         */
-        cache: {
-        },
-
-        /**
-         * @description 将 character 添加到缓存
-         * @param id {String}
-         * @param character {Character}
-         * @return {Character}
-         */
-        set: function ( id, character ) {
-            this.cache[ id ] = character;
-            return this.cache[ id ];
-        },
-        /**
-         * @description 根据指定ID获取 character
-         * @param id {String}
-         * @return {Character}
-         */
-        get: function ( id ) {
-            return this.cache[ id ];
-        },
-        /**
-         * @description 从缓存中删除指定ID的character
-         * @param id {String}
-         */
-        remove: function ( id ) {
-            delete this.cache[ id ];
-        }
-    };
-
 
     /**
      * @description 设置定位标签
@@ -225,6 +243,7 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
 
         character.update( options );
     };
+
     /**
      * @description 销毁
      * @param options {{ id: String, x: Number, y: Number }}
@@ -244,6 +263,7 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
 
         Config.getPersonInfoList();
     };
+
     /**
      * @description 获取参数
      * @param options {{}?}
@@ -389,7 +409,7 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
             progressbar,
             _this = this
         ;
-        if ( percentage > 1 ) {
+        if ( percentage > 0.98 ) {
             percentage = 1;
             msg = "加载完毕！";
             setTimeout( function () {
@@ -417,17 +437,20 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
             stage = this.getStage(),
             resources = PIXI.loader.resources,
             ground,
-            charactorContainer
+            characterContainer
         ;
-        ground = new PIXI.Sprite( resources[ "ground" ].texture );
+        ground = new PIXI.Sprite( resources[ "ground_light" ].texture );
+
+        this._groundSprite = ground;
+
         stage.addChild( ground );
 
-        charactorContainer = new PIXI.Container();
-        stage.addChild( charactorContainer );
+        characterContainer = new PIXI.Container();
+        stage.addChild( characterContainer );
 
-        this._charactorContainer = charactorContainer;
+        this._charactorContainer = characterContainer;
 
-        this.initedCallback && this.initedCallback();
+        this.initializedCallback && this.initializedCallback();
     };
 
     /**
@@ -442,11 +465,13 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "./character" ], function ( PIXI
         loop();
 
         function loop() {
-            requestAnimationFrame( loop );
+            // requestAnimationFrame( loop );
+            setTimeout( loop, 160 );
             _this.update();
         }
 
     };
+
 
     return Scene;
 } );

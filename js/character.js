@@ -2,7 +2,7 @@
  * @fileOverview 角色
  * @author 吴钦飞（wuqinfei@qq.com）
  */
-define( [ "../lib/pixi/4.6.1/pixi", "./config" ], function ( PIXI, Config ) {
+define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], function ( PIXI, Config ) {
     "use strict";
 
     /**
@@ -36,6 +36,12 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config" ], function ( PIXI, Config ) {
         this.options = this.getOptions( options );
 
         /**
+         * @description sprite
+         * @type {PIXI.Container}
+         */
+        this.pixiContainer = null;
+
+        /**
          * @description 人员信息
          * @type {{id: string, name: string, type: string}}
          */
@@ -67,18 +73,54 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config" ], function ( PIXI, Config ) {
      */
     Character.prototype.create = function () {
         var
-            sprite
+            pixiSprite,
+            pixiText,
+            personInfo = this.personInfo,
+            color = Config.getColor( personInfo.type ),
+            graphics = new PIXI.Graphics(),
+            pixiContainer = new PIXI.Container()
         ;
 
-        sprite = new PIXI.Sprite(
-            PIXI.loader.resources[ this.personInfo.type ].texture
+        // 图片
+        pixiSprite = new PIXI.Sprite(
+            PIXI.loader.resources[ personInfo.type ].texture
         );
+        pixiSprite.scale.set( 0.2, 0.2 );
 
-        sprite.scale.set( 0.2, 0.2 );
+        // 文字
+        pixiText = new PIXI.Text( personInfo.name, {
+            // fontFamily: "Microsoft Yahei",
+            fontSize: 14,
+            fill : color.text
+        } );
+        pixiText.position.set( 0, pixiSprite.height + 2 );
 
-        this.charactorContainer.addChild( sprite );
+        pixiSprite.position.set( ( pixiText.width - pixiSprite.width ) / 2, 0 );
 
-        this.sprite = sprite;
+        // 文字框
+        graphics.lineStyle( 1, color.border, 1 );
+        graphics.beginFill( color.background, 1 );
+        graphics.drawRect( pixiText.position.x - 1 , pixiText.position.y - 1, pixiText.width + 2, pixiText.height + 2 );
+
+        pixiContainer.addChild( pixiSprite );
+
+        pixiContainer.addChild( graphics );
+
+        pixiContainer.addChild( pixiText );
+
+        // Opt-in to interactivity
+        pixiContainer.interactive = true;
+        // Shows hand cursor
+        pixiContainer.buttonMode = true;
+
+        pixiContainer.on( "pointerdown", function () {
+            // alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
+            jQuery( document ).trigger( "click.character", personInfo );
+        });
+
+        this.charactorContainer.addChild( pixiContainer );
+
+        this.pixiContainer = pixiContainer;
     };
     /**
      * @description 更新
@@ -93,13 +135,30 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config" ], function ( PIXI, Config ) {
 
             this.position_2D = Config.convertPosition( this.position_CAD );
 
-            this.sprite.position.set( this.position_2D.x, this.position_2D.y );
+            this.pixiContainer.position.set( this.position_2D.x - this.pixiContainer.width / 2, this.position_2D.y  - this.pixiContainer.height / 2 );
         }
 
     };
 
+    /**
+     * @description 销毁
+     */
     Character.prototype.destroy = function () {
+        this.charactorContainer.removeChild( this.pixiContainer );
+    };
 
+    /**
+     * @description 隐藏
+     */
+    Character.prototype.hide = function () {
+        this.pixiContainer.visible = false;
+    };
+
+    /**
+     * @description 显示
+     */
+    Character.prototype.show = function () {
+        this.pixiContainer.visible = true;
     };
 
     /**
