@@ -85,7 +85,10 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], 
         pixiSprite = new PIXI.Sprite(
             PIXI.loader.resources[ personInfo.type ].texture
         );
-        pixiSprite.scale.set( 0.2, 0.2 );
+        // var rate = pixiSprite.width / pixiSprite.height;
+        // pixiSprite.width = 32;
+        // pixiSprite.height = 32 / rate;
+
 
         // 文字
         pixiText = new PIXI.Text( personInfo.name, {
@@ -93,7 +96,7 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], 
             fontSize: 14,
             fill : color.text
         } );
-        pixiText.position.set( 0, pixiSprite.height + 2 );
+        pixiText.position.set( 0, pixiSprite.height + 3 );
 
         pixiSprite.position.set( ( pixiText.width - pixiSprite.width ) / 2, 0 );
 
