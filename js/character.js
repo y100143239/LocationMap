@@ -96,7 +96,7 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], 
             fontSize: 14,
             fill : color.text
         } );
-        pixiText.position.set( 0, pixiSprite.height + 3 );
+        pixiText.position.set( 0, pixiSprite.height );
 
         pixiSprite.position.set( ( pixiText.width - pixiSprite.width ) / 2, 0 );
 
