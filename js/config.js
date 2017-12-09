@@ -122,16 +122,12 @@ define( [ "../lib/jquery/2.2.4/jquery" ], function () {
         var
             name = this.getPersonInfoById( id ).name
         ;
-        if ( name !== undefined ) {
-            return name;
-        }
-        Config.log( "未获取到【" + id + "】对应的名称.." );
-
-        name = this.getPersonInfoById( id ).name;
 
         if ( name === undefined ) {
+            Config.log( "未获取到【" + id + "】对应的名称.." );
             name = id;
         }
+
         return name;
     };
 

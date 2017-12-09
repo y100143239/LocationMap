@@ -109,14 +109,14 @@ function ( PIXI, Config, Character ) {
          * @type {PIXI.Sprite}
          * @private
          */
-        this._groundSprite = null;
+        // this._groundSprite = null;
 
         /**
          * @description 角色容器
          * @type {PIXI.Container}
          * @private
          */
-        this._charactorContainer = null;
+        this._charactersContainer = null;
 
         /**
          * @description 渲染器
@@ -210,6 +210,7 @@ function ( PIXI, Config, Character ) {
      */
     Scene.prototype.createCharacter = function ( options ) {
         var
+            _this = this,
             character
         ;
 
@@ -217,15 +218,17 @@ function ( PIXI, Config, Character ) {
             this.updateCharacter( options );
             return;
         }
-        character = new Character( this._charactorContainer, options );
+        character = new Character( this._charactersContainer, options );
 
         character.create();
 
-        character.update( options );
+        character.updateCADPosition( options );
 
         this.CharacterCache.set( options.id, character );
 
-        Config.getPersonInfoList();
+        Config.getPersonInfoList( function () {
+            _this.renameCharacter();
+        } );
     };
 
     /**
@@ -241,7 +244,7 @@ function ( PIXI, Config, Character ) {
             return;
         }
 
-        character.update( options );
+        character.updateCADPosition( options );
     };
 
     /**
@@ -250,7 +253,8 @@ function ( PIXI, Config, Character ) {
      */
     Scene.prototype.destroyCharacter = function ( options ) {
         var
-            character = this.CharacterCache.get( options.id )
+            character = this.CharacterCache.get( options.id ),
+            _this = this
         ;
         if ( ! character ) {
             console.warn( "【" + options.id + "】不存在！" );
@@ -261,7 +265,27 @@ function ( PIXI, Config, Character ) {
 
         this.CharacterCache.remove( options.id );
 
-        Config.getPersonInfoList();
+        Config.getPersonInfoList( function () {
+            _this.renameCharacter();
+        } );
+    };
+
+    /**
+     * @description 重命名所有 name的值为id 的角色
+     */
+    Scene.prototype.renameCharacter = function () {
+        var
+            cache = this.CharacterCache.cache,
+            id,
+            character
+        ;
+        // 遍历缓存，渲染所有角色
+        for ( id in cache ) {
+            if ( cache.hasOwnProperty( id ) ) {
+                character = cache[ id ];
+                character.updateCharacterName();
+            }
+        }
     };
 
     /**
@@ -320,6 +344,18 @@ function ( PIXI, Config, Character ) {
      * @public
      */
     Scene.prototype.update = function () {
+        var
+            cache = this.CharacterCache.cache,
+            id,
+            character
+        ;
+        // 遍历缓存，渲染所有角色
+        for ( id in cache ) {
+            if ( cache.hasOwnProperty( id ) ) {
+                character = cache[ id ];
+                character.update();
+            }
+        }
         this.getRenderer().render( this.getStage() );
     };
 
@@ -437,18 +473,17 @@ function ( PIXI, Config, Character ) {
             stage = this.getStage(),
             resources = PIXI.loader.resources,
             ground,
-            characterContainer
+            charactersContainer
         ;
-        ground = new PIXI.Sprite( resources[ "ground_light" ].texture );
+        ground = new PIXI.Sprite( resources[ "ground_dark" ].texture );
 
-        this._groundSprite = ground;
 
         stage.addChild( ground );
 
-        characterContainer = new PIXI.Container();
-        stage.addChild( characterContainer );
+        charactersContainer = new PIXI.Container();
+        stage.addChild( charactersContainer );
 
-        this._charactorContainer = characterContainer;
+        this._charactersContainer = charactersContainer;
 
         this.initializedCallback && this.initializedCallback();
     };

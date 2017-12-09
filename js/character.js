@@ -4,13 +4,15 @@
  */
 define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], function ( PIXI, Config ) {
     "use strict";
-
+    var
+        jQuery = window.jQuery
+    ;
     /**
      * @description 构造函数
      * @constructor
      */
-    function Character ( charactorContainer, options ) {
-        this.charactorContainer = charactorContainer;
+    function Character ( charactersContainer, options ) {
+        this.charactersContainer = charactersContainer;
         this._declare( options );
     }
 
@@ -39,13 +41,32 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], 
          * @description sprite
          * @type {PIXI.Container}
          */
-        this.pixiContainer = null;
+        this.characterContainer = null;
 
         /**
          * @description 人员信息
          * @type {{id: string, name: string, type: string}}
          */
-        this.personInfo = Config.getPersonInfoById( this.options.id );
+        this.personInfo = null;
+
+        /**
+         * @description 记录 options 里的x坐标
+         * @type {number}
+         */
+        this.x = 0;
+
+        /**
+         * @description 记录 options 里的y坐标
+         * @type {number}
+         */
+        this.y = 0;
+
+
+        /**
+         * @description 对应的名称
+         * @type {string}
+         */
+        this.name = "";
 
         /**
          * @description CAD图上对应的坐标
@@ -75,20 +96,18 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], 
         var
             pixiSprite,
             pixiText,
-            personInfo = this.personInfo,
+            personInfo = this.personInfo = Config.getPersonInfoById( this.getOptions().id ),
             color = Config.getColor( personInfo.type ),
             graphics = new PIXI.Graphics(),
-            pixiContainer = new PIXI.Container()
+            characterContainer = new PIXI.Container()
         ;
+
+        this.name = personInfo.name;
 
         // 图片
         pixiSprite = new PIXI.Sprite(
             PIXI.loader.resources[ personInfo.type ].texture
         );
-        // var rate = pixiSprite.width / pixiSprite.height;
-        // pixiSprite.width = 32;
-        // pixiSprite.height = 32 / rate;
-
 
         // 文字
         pixiText = new PIXI.Text( personInfo.name, {
@@ -105,63 +124,136 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], 
         graphics.beginFill( color.background, 1 );
         graphics.drawRect( pixiText.position.x - 1 , pixiText.position.y - 1, pixiText.width + 2, pixiText.height + 2 );
 
-        pixiContainer.addChild( pixiSprite );
+        characterContainer.addChild( pixiSprite );
+        characterContainer.addChild( graphics );
+        characterContainer.addChild( pixiText );
 
-        pixiContainer.addChild( graphics );
-
-        pixiContainer.addChild( pixiText );
+        characterContainer._pku_pixiSprite = pixiSprite;
+        characterContainer._pku_graphics = graphics;
+        characterContainer._pku_pixiText = pixiText;
 
         // Opt-in to interactivity
-        pixiContainer.interactive = true;
+        characterContainer.interactive = true;
         // Shows hand cursor
-        pixiContainer.buttonMode = true;
+        characterContainer.buttonMode = true;
 
-        pixiContainer.on( "pointerdown", function () {
+        characterContainer.on( "pointerdown", function () {
             // alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
             jQuery( document ).trigger( "click.character", personInfo );
         });
 
-        this.charactorContainer.addChild( pixiContainer );
+        this.charactersContainer.addChild( characterContainer );
 
-        this.pixiContainer = pixiContainer;
+        this.characterContainer = characterContainer;
     };
+
+    Character.prototype.update = function () {
+        var
+            position_CAD = this.position_CAD
+        ;
+
+        // 位置改变了，才计算并更新
+        if ( this.x !== position_CAD.x || this.y !== position_CAD.y ) {
+
+            position_CAD.x = this.x;
+            position_CAD.y = this.y;
+
+            this.updatePixiPosition();
+        }
+    };
+
     /**
-     * @description 更新
+     * @description 更新，仅记录，而不改属性
+     *
      * @param options {{ id: String, x: Number, y: Number}}
      */
-    Character.prototype.update = function ( options ) {
+    Character.prototype.updateCADPosition = function ( options ) {
 
-        if ( this.position_CAD.x !== options.x || this.position_CAD.y !== options.y ) {
-
-            this.position_CAD.x = options.x;
-            this.position_CAD.y = options.y;
-
-            this.position_2D = Config.convertPosition( this.position_CAD );
-
-            this.pixiContainer.position.set( this.position_2D.x - this.pixiContainer.width / 2, this.position_2D.y  - this.pixiContainer.height / 2 );
-        }
+        this.x = options.x;
+        this.y = options.y;
 
     };
+
+    /**
+     * @description 更新PIXI上的位置
+     */
+    Character.prototype.updatePixiPosition = function () {
+
+        // 计算 2D 坐标
+        this.position_2D = Config.convertPosition( this.position_CAD );
+
+        // 设置位置
+        this.characterContainer.position.set( this.position_2D.x - this.characterContainer.width / 2, this.position_2D.y  - this.characterContainer.height / 2 );
+
+    };
+
+    /**
+     * @description 更新角色的name
+     */
+    Character.prototype.updateCharacterName = function () {
+        var
+            characterContainer,
+            color,
+            pixiSprite,
+            graphics,
+            pixiText,
+            personInfo
+        ;
+
+        // 如果 name 不是 数字字符串，则不更新。
+        if ( ! jQuery.isNumeric( this.name ) ) {
+            return;
+        }
+
+        personInfo = Config.getPersonInfoById( this.getOptions().id );
+
+        if ( jQuery.isNumeric( personInfo.name ) ) {
+            return;
+        }
+
+        this.name = personInfo.name;
+        color = Config.getColor( personInfo.type );
+
+        characterContainer = this.characterContainer;
+        pixiSprite = characterContainer._pku_pixiSprite;
+        graphics = characterContainer._pku_graphics;
+        pixiText = characterContainer._pku_pixiText;
+
+        // 重设置 name
+        pixiText.text = this.name;
+
+        // 擦除图形（文字框），并重绘制
+        graphics.clear();
+        graphics.lineStyle( 1, color.border, 1 );
+        graphics.beginFill( color.background, 1 );
+        graphics.drawRect( pixiText.position.x - 1 , pixiText.position.y - 1, pixiText.width + 2, pixiText.height + 2 );
+
+        // 重新设置图像的位置，使其居中
+        pixiSprite.position.set( ( pixiText.width - pixiSprite.width ) / 2, 0 );
+
+    };
+
+
 
     /**
      * @description 销毁
      */
     Character.prototype.destroy = function () {
-        this.charactorContainer.removeChild( this.pixiContainer );
+        this.charactersContainer.removeChild( this.characterContainer );
     };
 
     /**
      * @description 隐藏
      */
     Character.prototype.hide = function () {
-        this.pixiContainer.visible = false;
+        this.characterContainer.visible = false;
     };
 
     /**
      * @description 显示
      */
     Character.prototype.show = function () {
-        this.pixiContainer.visible = true;
+        this.characterContainer.visible = true;
     };
 
     /**
