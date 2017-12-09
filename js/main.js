@@ -18,7 +18,7 @@ define( [ "./scene", "./config", "jquery" ], function ( Scene, Config ) {
     ;
 
     /** @event click.character 角色被点击事件 */
-    jQuery( document ).on( "click.character", function ( event, personInfo ) {
+    jQuery( document ).on( "pku.click.character", function ( event, personInfo ) {
         alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
     } );
 

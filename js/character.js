@@ -139,7 +139,7 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "jquery" ], function ( PIXI, Con
 
         characterContainer.on( "pointerdown", function () {
             // alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
-            jQuery( document ).trigger( "click.character", personInfo );
+            jQuery( document ).trigger( "pku.click.character", personInfo );
         });
 
         this.charactersContainer.addChild( characterContainer );
