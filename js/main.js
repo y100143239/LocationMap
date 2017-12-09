@@ -1,11 +1,14 @@
 requirejs.config( {
+    paths: {
+        "jquery": "../lib/jquery/2.2.4/jquery"
+    },
     waitSeconds: 300
 } );
 /**
  * @fileOverview 入口
  * @author 吴钦飞（wuqinfei@qq.com）
  */
-define( [ "./scene", "./config", "../lib/jquery/2.2.4/jquery" ], function ( Scene, Config ) {
+define( [ "./scene", "./config", "jquery" ], function ( Scene, Config ) {
     "use strict";
     var
         scene,

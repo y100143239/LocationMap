@@ -477,7 +477,6 @@ function ( PIXI, Config, Character ) {
         ;
         ground = new PIXI.Sprite( resources[ "ground_dark" ].texture );
 
-
         stage.addChild( ground );
 
         charactersContainer = new PIXI.Container();

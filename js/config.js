@@ -2,7 +2,7 @@
  * @fileOverview 配置
  * @author 吴钦飞（wuqinfei@qq.com）
  */
-define( [ "../lib/jquery/2.2.4/jquery" ], function () {
+define( [ "jquery" ], function () {
     "use strict";
     var
         Config,

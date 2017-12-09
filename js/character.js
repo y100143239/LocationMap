@@ -2,7 +2,7 @@
  * @fileOverview 角色
  * @author 吴钦飞（wuqinfei@qq.com）
  */
-define( [ "../lib/pixi/4.6.1/pixi", "./config", "../lib/jquery/2.2.4/jquery" ], function ( PIXI, Config ) {
+define( [ "../lib/pixi/4.6.1/pixi", "./config", "jquery" ], function ( PIXI, Config ) {
     "use strict";
     var
         jQuery = window.jQuery
