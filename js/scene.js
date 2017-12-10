@@ -499,8 +499,11 @@ function ( PIXI, Config, Character ) {
         loop();
 
         function loop() {
+
             // requestAnimationFrame( loop );
+
             setTimeout( loop, 160 );
+
             _this.update();
         }
 
