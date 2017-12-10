@@ -165,13 +165,15 @@ define( [ "../lib/pixi/4.6.1/pixi", "./config", "jquery" ], function ( PIXI, Con
     /**
      * @description 更新，仅记录，而不改属性
      *
-     * @param options {{ id: String, x: Number, y: Number}}
+     * @param options { { id: String, x: Number, y: Number} }
      */
     Character.prototype.updateCADPosition = function ( options ) {
 
         this.x = options.x;
         this.y = options.y;
 
+        // 便于垃圾回收
+        options = null;
     };
 
     /**
