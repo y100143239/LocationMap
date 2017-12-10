@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
 
+    <link rel="stylesheet" href="css/style.css">
     <title>青山分局</title>
 
     <script data-main="js/main" src="lib/requirejs/2.1.22/require.js"></script>
@@ -15,18 +16,13 @@
             margin: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,.5);
         }
-        #container > .dg {
-            position: absolute;
-            top: 0;
-            right: 0;
-        }
     </style>
 
 </head>
 <body>
 
     <div id="container"
-         style="width: 760px; height: 1050px;"
+         style="width: 760px; height: 1050px; transform: scale(0.9);"
          data-config-options='{
             "personInfoListUrl": "./data/personInfoListData.json"
          }'
@@ -41,7 +37,12 @@
                 { "name": "suspect_man", "url": "images/character/v4/suspect_man.png" },
                 { "name": "suspect_woman", "url": "images/character/v4/suspect_woman.png" }
             ]
-         }'></div>
+         }'>
+        <div class="cg-panel">
+            <div class="cg-panel-heading"></div>
+            <div class="cg-panel-body"></div>
+        </div>
+    </div>
 
 </body>
 </html>
