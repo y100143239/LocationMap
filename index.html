@@ -18,11 +18,14 @@
         }
     </style>
 
+    <link rel="stylesheet" href="lib/dat.gui/0.6.5/dat.gui.css">
+
 </head>
 <body>
 
     <div id="container"
          style="width: 760px; height: 1050px; transform: scale(0.9);"
+         data-websocket-url="ws://localhost:8080/pkui/noauth/websocket/getPosition"
          data-config-options='{
             "personInfoListUrl": "./data/personInfoListData.json"
          }'

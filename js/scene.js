@@ -500,9 +500,9 @@ function ( PIXI, Config, Character ) {
 
         function loop() {
 
-            // requestAnimationFrame( loop );
+            requestAnimationFrame( loop );
 
-            setTimeout( loop, 160 );
+            // setTimeout( loop, 160 );
 
             _this.update();
         }
