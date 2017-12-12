@@ -2,12 +2,13 @@
  * @fileOverview 配置
  * @author 吴钦飞（wuqinfei@qq.com）
  */
-define( [ "jquery" ], function () {
+define( [ "jquery", "./utils" ], function ( $, Utils ) {
     "use strict";
     var
-        Config,
-        $ = jQuery
+        Config
     ;
+
+    $ = $ || window.jQuery;
 
     Config = {
 
@@ -124,7 +125,7 @@ define( [ "jquery" ], function () {
         ;
 
         if ( name === undefined ) {
-            Config.log( "未获取到【" + id + "】对应的名称.." );
+            Utils.log( "未获取到【" + id + "】对应的名称.." );
             name = id;
         }
 
@@ -257,29 +258,6 @@ define( [ "jquery" ], function () {
         }
 
         return fmtPersonInfoDic;
-    };
-
-
-    /**
-     * @description 日志
-     * @param content
-     * @public
-     */
-    Config.log = function ( content ) {
-        var
-            date = new Date(),
-            hours = date.getHours(),
-            minutes = date.getMinutes(),
-            seconds = date.getSeconds(),
-            milliseconds = date.getMilliseconds(),
-            time
-        ;
-
-        milliseconds = ( "   " + milliseconds ).slice( -3 );
-
-        time = hours + "时" + minutes + "分" + seconds + "秒 " + milliseconds + "毫秒: ";
-
-        console.info( time, content );
     };
 
     return Config;
