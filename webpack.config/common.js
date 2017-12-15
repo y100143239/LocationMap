@@ -5,15 +5,7 @@ const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
 module.exports = {
 
     entry: {
-        app: "./src/index.js",
-        print: "./src/print.js"
-    },
-
-    devtool: 'inline-source-map',
-
-    devServer: {
-        contentBase: './dist',
-        port: 8089
+        app: './src/index.js'
     },
 
     plugins: [
@@ -22,13 +14,14 @@ module.exports = {
 
         // 生成 index.html 文件
         new HtmlWebpackPlugin( {
-            title: 'Output Management'
+            title: 'production'
         } )
+
     ],
 
     output: {
         filename: '[name].bundle.js',
-        path: path.resolve( __dirname, "dist" )
+        path: path.resolve( __dirname, "../dist" )
     },
 
     module: {
@@ -39,7 +32,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    // "style-loader",
+                    "style-loader",
                     "css-loader"
                 ]
             },

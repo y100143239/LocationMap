@@ -120,3 +120,20 @@
    
    安装：sudo npm install --save-dev webpack-dev-server
    说明：一个简单 web 服务器，实时刷新（live reloading）
+   
+# 5. 模块热替换
+
+它允许在运行时更新各种模块，而无需进行完全刷新。
+
+# 6. Tree Shaking
+
+1. 精简输出
+
+   安装：sudo npm i --save-dev uglifyjs-webpack-plugin
+
+# 7. 生产环境构建
+
+1. 配置
+
+   安装：sudo npm install --save-dev webpack-merge
+   

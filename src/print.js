@@ -3,4 +3,8 @@ function printMe() {
     // console.error( 'I am an error!' );
 }
 
-export { printMe };
+function printHer() {
+    console.log( "She is a girl!" );
+}
+
+export { printMe, printHer };
