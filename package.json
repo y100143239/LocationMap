@@ -1,0 +1,32 @@
+{
+  "name": "LocationMap",
+  "version": "1.0.0",
+  "description": "1. 安装",
+  "main": "webpack.config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4",
+    "webpack": "^3.10.0"
+  },
+  "devDependencies": {
+    "css-loader": "^0.28.7",
+    "file-loader": "^1.1.5",
+    "style-loader": "^0.19.1"
+  },
+  "scripts": {
+    "build": "./node_modules/.bin/webpack --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forwardNow/LocationMap.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/forwardNow/LocationMap/issues"
+  },
+  "homepage": "https://github.com/forwardNow/LocationMap#readme"
+}
