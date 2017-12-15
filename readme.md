@@ -37,7 +37,7 @@
         $ npm run build
     
     
-#2. 管理资源
+# 2. 管理资源
 
 1. 加载 CSS
 
@@ -91,3 +91,32 @@
 4. 加载数据 
 
    默认支持 ".json" 后缀的 import 
+   
+# 3. 管理输出
+
+1. 设定 HtmlWebpackPlugin
+
+   安装：sudo npm install --save-dev html-webpack-plugin
+   
+   说明：生成新的 dist/index.html 文件
+   
+2. 清理 /dist 文件夹
+
+   安装：sudo npm install clean-webpack-plugin --save-dev
+   
+   说明：清理
+    
+# 4. 开发
+
+1. 使用 source map
+
+   说明：追踪到错误和警告在源代码中的原始位置
+   
+2. 使用观察模式
+
+   使用：webpack --watch
+    
+3. webpack-dev-server
+   
+   安装：sudo npm install --save-dev webpack-dev-server
+   说明：一个简单 web 服务器，实时刷新（live reloading）

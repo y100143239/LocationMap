@@ -1,11 +1,36 @@
 const path = require( "path" );
+const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
+const CleanWebpackPlugin = require( 'clean-webpack-plugin' );
 
 module.exports = {
-    entry: "./src/index.js",
+
+    entry: {
+        app: "./src/index.js",
+        print: "./src/print.js"
+    },
+
+    devtool: 'inline-source-map',
+
+    devServer: {
+        contentBase: './dist',
+        port: 8089
+    },
+
+    plugins: [
+        // 清除 dist 目录
+        new CleanWebpackPlugin( [ 'dist' ] ),
+
+        // 生成 index.html 文件
+        new HtmlWebpackPlugin( {
+            title: 'Output Management'
+        } )
+    ],
+
     output: {
-        filename: "bundle.js",
+        filename: '[name].bundle.js',
         path: path.resolve( __dirname, "dist" )
     },
+
     module: {
         rules: [
             /**
