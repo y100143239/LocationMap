@@ -473,7 +473,7 @@ Scene.prototype._createScene = function () {
         ground,
         charactersContainer
     ;
-    ground = new PIXI.Sprite( resources[ "ground_dark" ].texture );
+    ground = new PIXI.Sprite( resources[ "ground" ].texture );
 
     stage.addChild( ground );
 

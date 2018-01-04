@@ -8,8 +8,7 @@ const jQuery = require("jquery");
 
 let Config = {
 
-    /** 调试模式，控制台输出一些调试信息 */
-    debug: true,
+    isInit: true,
 
     /** 人员信息列表 - URL */
     personInfoListUrl: "",
