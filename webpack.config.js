@@ -3,10 +3,12 @@ const path = require( "path" );
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const extractForSrc = new ExtractTextPlugin( "form-style.css" );
 const extractForDist = new ExtractTextPlugin( "style.css" );
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+
 
 module.exports = {
 
-    devtool: 'inline-source-map',
+    // devtool: 'inline-source-map',
 
     externals: {
         jquery: 'jQuery'
@@ -18,7 +20,8 @@ module.exports = {
 
     plugins: [
         extractForSrc,
-        extractForDist
+        extractForDist,
+        new UglifyJSPlugin()
     ],
 
     output: {
