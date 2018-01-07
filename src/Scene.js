@@ -333,6 +333,7 @@ Scene.prototype.getRenderer = function () {
     if ( !this._renderer ) {
         this._renderer = new PIXI.autoDetectRenderer( this._container.offsetWidth, this._container.offsetHeight );
         this._container.appendChild( this._renderer.view );
+        this._addPanzoom();
     }
     return this._renderer;
 };
@@ -505,6 +506,33 @@ Scene.prototype._animate = function () {
         _this.update();
     }
 
+};
+
+/**
+ * 注册 panzoom 功能
+ * @private
+ */
+Scene.prototype._addPanzoom = function () {
+    let
+        $container = jQuery( this._container )
+    ;
+
+    $container.panzoom();
+
+    $container.parent().on('mousewheel', function( e ) {
+        let
+            delta,
+            zoomOut
+        ;
+        e.preventDefault();
+        delta = e.delta || e.originalEvent.wheelDelta;
+        zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+        $container.panzoom('zoom', zoomOut, {
+            increment: 0.1,
+            animate: false,
+            focal: e
+        });
+    });
 };
 
 

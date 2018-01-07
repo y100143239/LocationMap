@@ -14,34 +14,38 @@
 </head>
 <body>
 
-<div id="container"
-     style="width: 650px; height: 1920px;"
-     data-websocket-url="ws://localhost:8080/pkui/noauth/websocket/getPosition"
-     data-config-options='{
-            "personInfoListUrl": "../test/personInfoListData.json"
-         }'
-     data-scene-options='{
-            "resources": [
-                { "name": "ground", "url": "asset/images/scene/ground_650x1920_dark.png" },
-                { "name": "ordinary_man", "url": "asset/images/character/v4/ordinary_man.png" },
-                { "name": "ordinary_woman", "url": "asset/images/character/v4/ordinary_woman.png" },
-                { "name": "police_man", "url": "asset/images/character/v4/police_man.png" },
-                { "name": "police_woman", "url": "asset/images/character/v4/police_woman.png" },
-                { "name": "suspect_man", "url": "asset/images/character/v4/suspect_man.png" },
-                { "name": "suspect_woman", "url": "asset/images/character/v4/suspect_woman.png" }
-            ]
-         }'>
+<div class="myWrapper" style="width: 760px; height: 1920px; background: gray;">
+
+    <div id="container"
+         style="width: 650px; height: 1920px;"
+         data-websocket-url="ws://localhost:8080/pkui/noauth/websocket/getPosition"
+         data-config-options='{
+                "personInfoListUrl": "../test/personInfoListData.json"
+             }'
+         data-scene-options='{
+                "resources": [
+                    { "name": "ground", "url": "asset/images/scene/ground_650x1920_dark.png" },
+                    { "name": "ordinary_man", "url": "asset/images/character/v4/ordinary_man.png" },
+                    { "name": "ordinary_woman", "url": "asset/images/character/v4/ordinary_woman.png" },
+                    { "name": "police_man", "url": "asset/images/character/v4/police_man.png" },
+                    { "name": "police_woman", "url": "asset/images/character/v4/police_woman.png" },
+                    { "name": "suspect_man", "url": "asset/images/character/v4/suspect_man.png" },
+                    { "name": "suspect_woman", "url": "asset/images/character/v4/suspect_woman.png" }
+                ]
+             }'>
+    </div>
+
 </div>
 
 <script>
     +function () {
-        let
+        var
             jQuery = window.jQuery
         ;
 
         // CAD图坐标 转 2D坐标
         window.LocationMap.Config.convertPosition = function ( pos ) {
-            let
+            var
                 cad_x = pos.x,
                 cad_y = pos.y
             ;
@@ -54,11 +58,11 @@
 
         /** @event click.character 角色被点击事件 */
         jQuery( document ).on( "pku_click_character", function ( event, personInfo ) {
-            alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
+            console.info( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
         } );
 
         jQuery( document ).ready( function () {
-            let
+            var
                 locationMap,
                 sceneOptions,
                 configOptions,

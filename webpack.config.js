@@ -21,7 +21,7 @@ module.exports = {
     plugins: [
         extractForSrc,
         extractForDist,
-        new UglifyJSPlugin()
+        // new UglifyJSPlugin()
     ],
 
     output: {
