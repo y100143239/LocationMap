@@ -6,6 +6,8 @@
     - [4. 说明](#4-%E8%AF%B4%E6%98%8E)
     - [5. 文档](#5-%E6%96%87%E6%A1%A3)
     - [6. 使用](#6-%E4%BD%BF%E7%94%A8)
+        - [6.1 API](#61-api)
+        - [6.2 示例](#62-%E7%A4%BA%E4%BE%8B)
     - [7. 坐标转换](#7-%E5%9D%90%E6%A0%87%E8%BD%AC%E6%8D%A2)
         - [7.1 参数](#71-%E5%8F%82%E6%95%B0)
         - [7.2 求比例（ratio）](#72-%E6%B1%82%E6%AF%94%E4%BE%8B%EF%BC%88ratio%EF%BC%89)
@@ -53,27 +55,28 @@
  
 ## 6. 使用
 
-**示例**：
+### 6.1 API
 
-    LocationMap\
-        dist\
-            index.html
-            
-**设置 CAD图坐标 转 2D坐标 的转换器**
+**window.LocationMap( options )**
 
-    window.LocationMap.Config.convertPosition = function ( pos ) {
-        let
-            cad_x = pos.x,
-            cad_y = pos.y
-        ;
-    
-        return {
-            x: ( cad_x - 962 ) / 26.225806451612904 + 72,
-            y: ( cad_y - 714 ) / -26.16446124763705 + 606
-        };
-    };
+  * 作用：构造地图
+  * 查阅：`src/Scene.js`
 
-****    
+
+**window.LocationMap.Config.init( options, callback )**
+
+  * 作用：初始化配置
+  * 查阅：`src/Config.js`
+
+**locationMap.setCharacter( options )**
+
+  * 作用：在已构建完毕后的地图上设置位置标签
+  * 查阅：`src/Scene.js`
+
+### 6.2 示例
+
+ * `dist/index.html` ：横版
+ * `dist/index_vertical.html`：竖版
 
 ## 7. 坐标转换
 
