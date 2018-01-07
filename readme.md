@@ -2,7 +2,7 @@
 - [人员位置图——治安](#%E4%BA%BA%E5%91%98%E4%BD%8D%E7%BD%AE%E5%9B%BE%E2%80%94%E2%80%94%E6%B2%BB%E5%AE%89)
     - [1. 简介](#1-%E7%AE%80%E4%BB%8B)
     - [2. 编撰](#2-%E7%BC%96%E6%92%B0)
-    - [3. 参考](#3-%E5%8F%82%E8%80%83)
+    - [3. 演示](#3-%E6%BC%94%E7%A4%BA)
     - [4. 说明](#4-%E8%AF%B4%E6%98%8E)
     - [5. 文档](#5-%E6%96%87%E6%A1%A3)
     - [6. 使用](#6-%E4%BD%BF%E7%94%A8)
@@ -24,9 +24,10 @@
 
  吴钦飞（wuqinfei@qq.com）
  
-## 3. 参考
+## 3. 演示
 
- * 无
+ * [治安-横版](https://forwardnow.github.io/LocationMap/dist/index.html)
+ * [治安-竖版](https://forwardnow.github.io/LocationMap/dist/index_vertical.html)
 
 ## 4. 说明
 
