@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
 
-    <title>治安</title>
+    <title>治安-竖版</title>
 
     <script src="../dep/jquery/2.2.4/jquery.js"></script>
     <script src="./asset/js/locationMap.js"></script>
@@ -15,14 +15,14 @@
 <body>
 
 <div id="container"
-     style="width: 1920px; height: 650px;"
+     style="width: 650px; height: 1920px;"
      data-websocket-url="ws://localhost:8080/pkui/noauth/websocket/getPosition"
      data-config-options='{
             "personInfoListUrl": "../test/personInfoListData.json"
          }'
      data-scene-options='{
             "resources": [
-                { "name": "ground", "url": "asset/images/scene/ground_1920x650_dark.png" },
+                { "name": "ground", "url": "asset/images/scene/ground_650x1920_dark.png" },
                 { "name": "ordinary_man", "url": "asset/images/character/v4/ordinary_man.png" },
                 { "name": "ordinary_woman", "url": "asset/images/character/v4/ordinary_woman.png" },
                 { "name": "police_man", "url": "asset/images/character/v4/police_man.png" },
@@ -47,8 +47,8 @@
             ;
 
             return {
-                x: ( cad_x - 962 ) / 26.225806451612904 + 72,
-                y: ( cad_y - 714 ) / -26.16446124763705 + 606
+                y: ( cad_x - 962 ) / 26.225806451612904 + 72,
+                x: ( cad_y - 714 ) / -26.16446124763705 + 606
             };
         };
 

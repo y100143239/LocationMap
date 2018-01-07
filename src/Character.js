@@ -141,7 +141,7 @@ Character.prototype.create = function () {
 
     characterContainer.on( "pointerdown", function () {
         // alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
-        jQuery( document ).trigger( "pku.click.character", personInfo );
+        jQuery( document ).trigger( "pku_click_character", personInfo );
     } );
 
     this.charactersContainer.addChild( characterContainer );
