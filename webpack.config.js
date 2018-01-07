@@ -31,7 +31,6 @@ module.exports = {
 
     module: {
 
-
         rules: [
 
             /** 抽取 css文件到 单独的文件 */
