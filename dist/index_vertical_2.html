@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+
+    <title>治安-竖版</title>
+
+    <script src="../dep/jquery/2.2.4/jquery.js"></script>
+    <script src="./asset/js/locationMap.js"></script>
+
+</head>
+<body>
+
+<div class="myWrapper" style="width: 760px; height: 1080px; background: gray;">
+
+    <div data-toggle="LocationMap"
+         data-options='{
+                "canvas": {
+                    "width": 650,
+                    "height": 1920
+                },
+                "websocket": {
+                    "url": "ws://localhost:8080/pkui/noauth/websocket/getPosition",
+                    "onopen": "establishSocketCallback",
+                    "onmessage": "receivedMessageCallback",
+                    "onclose": "closeSocketCallback"
+                },
+                "personInfoListUrl": "../test/personInfoListData.json",
+                "onClickPerson", "clickPersonCallback",
+                "resources": [
+                    { "name": "ground", "url": "asset/images/scene/ground_650x1920_dark.png" },
+                    { "name": "ordinary_man", "url": "asset/images/character/v4/ordinary_man.png" },
+                    { "name": "ordinary_woman", "url": "asset/images/character/v4/ordinary_woman.png" },
+                    { "name": "police_man", "url": "asset/images/character/v4/police_man.png" },
+                    { "name": "police_woman", "url": "asset/images/character/v4/police_woman.png" },
+                    { "name": "suspect_man", "url": "asset/images/character/v4/suspect_man.png" },
+                    { "name": "suspect_woman", "url": "asset/images/character/v4/suspect_woman.png" }
+                ]
+             }'
+
+    >
+    </div>
+
+</div>
+
+<script>
+
+    // CAD图坐标 转 2D坐标
+    window.LocationMap.Config.convertPosition = function ( pos ) {
+        var
+            cad_x = pos.x,
+            cad_y = pos.y
+        ;
+
+        return {
+            y: ( cad_x - 962 ) / 26.225806451612904 + 72,
+            x: ( cad_y - 714 ) / -26.16446124763705 + 606
+        };
+    };
+
+    function establishSocketCallback() {
+
+    }
+    function receivedMessageCallback(event) {
+
+    }
+    function closeSocketCallback() {
+
+    }
+    function onClickPerson( personInfo ) {
+
+    }
+
+
+</script>
+
+</body>
+</html>

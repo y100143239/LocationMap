@@ -29,7 +29,7 @@
 ## 3. 演示
 
  * [治安-横版](https://forwardnow.github.io/LocationMap/dist/index.html)
- * [治安-竖版](https://forwardnow.github.io/LocationMap/dist/index_vertical.html)
+ * [治安-竖版](https://forwardnow.github.io/LocationMap/dist/index_vertical_3.html)
 
 ## 4. 说明
 
@@ -62,7 +62,6 @@
   * 作用：构造地图
   * 查阅：`src/Scene.js`
 
-
 **window.LocationMap.Config.init( options, callback )**
 
   * 作用：初始化配置
@@ -75,8 +74,8 @@
 
 ### 6.2 示例
 
- * `dist/index.html` ：横版
- * `dist/index_vertical.html`：竖版
+ * `dist/index.html`：横版
+ * `dist/index_vertical_3.html`：竖版
 
 ## 7. 坐标转换
 
@@ -173,9 +172,9 @@ y = ( y' - 714 ) / -26.16446124763705 + 606
 
 **界面**
 
-![坐标轴转换.png](./doc/坐标轴转换.png)
+![坐标轴转换_逆时针旋转画布.png](./doc/坐标轴转换_逆时针旋转画布.png)
 
-在PSD中对画布进行逆时针90°旋转 再进行水平翻转。
+在PSD中对画布进行逆时针90°旋转。
 
 【画布】：图片
 
@@ -186,7 +185,8 @@ y = ( y' - 714 ) / -26.16446124763705 + 606
   
 **坐标**
 
-互换 x 、y 坐标
+  * x’= y
+  * y’= -(x -1920)
 
 **解决画布溢出容器的问题**
 
