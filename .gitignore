@@ -5,3 +5,5 @@ package-lock.json
 *.dwl
 
 *.dwl2
+
+.DS_Store
