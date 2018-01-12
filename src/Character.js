@@ -24,7 +24,11 @@ function Character( charactersContainer, options ) {
  * @description 默认参数
  * @type {{}}
  */
-Character.prototype.defaults = {};
+Character.prototype.defaults = {
+    onClick: function () {
+        console.info( "被点击了" );
+    }
+};
 
 /**
  * @description 声明
@@ -44,6 +48,7 @@ Character.prototype._declare = function ( options ) {
      * @type {PIXI.Container}
      */
     this.characterContainer = null;
+
 
     /**
      * @description 人员信息
@@ -96,6 +101,7 @@ Character.prototype._declare = function ( options ) {
  */
 Character.prototype.create = function () {
     let
+        _this = this,
         pixiSprite,
         pixiText,
         personInfo = this.personInfo = Config.getPersonInfoById( this.getOptions().id ),
@@ -140,8 +146,7 @@ Character.prototype.create = function () {
     characterContainer.buttonMode = true;
 
     characterContainer.on( "pointerdown", function () {
-        // alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
-        jQuery( document ).trigger( "pku_click_character", personInfo );
+        _this.options.onClick( _this.options );
     } );
 
     this.charactersContainer.addChild( characterContainer );

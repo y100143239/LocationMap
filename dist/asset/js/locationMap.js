@@ -65,6 +65,12 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+module.exports = jQuery;
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -78,7 +84,7 @@ Object.defineProperty(exports, "__esModule", {
  * @author 吴钦飞（wuqinfei@qq.com）
  */
 
-var jQuery = __webpack_require__(1);
+var jQuery = __webpack_require__(0);
 
 var Config = {
 
@@ -107,30 +113,15 @@ var Config = {
 };
 
 /**
- * @description 初始化
- * @param options {Object}
- * @param callback {Function}
- * @public
- */
-Config.init = function (options, callback) {
-
-    jQuery.extend(this, options);
-
-    this.getPersonInfoList(callback);
-
-    return this;
-};
-
-/**
  * @description 获取人员信息列表
- * @param callback {Function?}
- * @param isSync {Boolean?} 是否同步
+ * @param doneCallback {Function?}
+ * @param failCallback {Function?}
  * @public
+ * @deprecated
  */
-Config.getPersonInfoList = function (callback, isSync) {
+Config.getPersonInfoList = function (doneCallback, failCallback) {
     var _this = this;
     jQuery.ajax({
-        async: !isSync,
         url: this.personInfoListUrl,
         method: "GET",
         cache: false,
@@ -143,14 +134,23 @@ Config.getPersonInfoList = function (callback, isSync) {
                 data = Config.handlePersonInfoResponse(data);
             }
             _this._personInfoDic = data;
-            callback && callback();
+            doneCallback && doneCallback();
         } else {
             throw "获取人员信息列表 失败！";
         }
     }).fail(function () {
         console.error("获取人员信息列表 失败！");
+        failCallback && failCallback();
     });
 };
+
+/**
+ * @description 获取人员信息列表
+ * @param callback {Function}
+ * @param isSync {Boolean?} 是否同步
+ * @public
+ */
+Config.requestPersonInfoList = Config.getPersonInfoList;
 
 /**
  * @description 根据id获取人员名称
@@ -287,12 +287,6 @@ Config.handlePersonInfoResponse = function (personInfoDic) {
 };
 
 exports.Config = Config;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = jQuery;
 
 /***/ }),
 /* 2 */
@@ -11708,18 +11702,212 @@ global.PIXI=exports;// eslint-disable-line
 
 var _Scene = __webpack_require__(4);
 
-var _Config = __webpack_require__(0);
+var _Config = __webpack_require__(1);
 
 __webpack_require__(7);
 
 // const Scene = require( "./Scene" );
+var jQuery = __webpack_require__(0);
 
 
-window.LocationMap = _Scene.Scene;
+var LocationMap = {},
+    defaults = void 0;
+/**
+ * @description 默认参数
+ * @type {{webSocket_url: string, webSocket_onOpen: string, webSocket_onMessage: string, webSocket_onClose: string, webSocket_onError: string, personInfoListUrl: string, onClickPerson: string, resourcesDir: string, positionConverter: string}}
+ */
+LocationMap.defaults = {
+    "webSocket_url": "ws://localhost:8080/pkui/noauth/websocket/getPosition",
+    "webSocket_onOpen": "establishSocketCallback",
+    "webSocket_onMessage": "receivedMessageCallback",
+    "webSocket_onClose": "closeSocketCallback",
+    "webSocket_onError": "socketErrorCallback",
+    "personInfoListUrl": "../test/personInfoListData.json",
+    "onClickPerson": "clickPersonCallback",
+    "resourcesDir": "./asset/",
+    "positionConverter": "positionConverter"
+};
 
-window.LocationMap.Config = _Config.Config;
+LocationMap.init = function () {
+    this.declare();
+    this.start();
+};
+LocationMap.declare = function () {
 
-console.info(_Scene.Scene);
+    this.$target = jQuery("[data-toggle=\"LocationMap\"]");
+
+    this.options = jQuery.extend(true, {}, this.defaults, this.$target.data("options"));
+};
+
+LocationMap.setConfigOptions = function () {
+
+    _Config.Config.personInfoListUrl = this.options.personInfoListUrl;
+
+    if (this.options.positionConverter) {
+        _Config.Config.convertPosition = window[this.options.positionConverter];
+    }
+};
+
+LocationMap.start = function () {
+    var _this = this;
+
+    this.setConfigOptions();
+
+    this.requestPersonInfoList(function () {
+        _this.createScene(function () {
+            _this.createWebSocket();
+        });
+    });
+};
+
+LocationMap.requestPersonInfoList = function (callback) {
+    console.info("1/3：【请求人员信息列表】...");
+
+    _Config.Config.requestPersonInfoList(function () {
+        console.info("1/3：【请求人员信息列表】成功！");
+        callback && callback();
+    }, function () {
+        console.error("1/3：【请求人员信息列表】失败！");
+    });
+};
+
+LocationMap.createScene = function (callback) {
+    console.info("2/3：【创建场景】...");
+    this.scene = new _Scene.Scene(this.$target.get(0), {
+        resourcesDir: this.options.resourcesDir,
+        onClickPerson: window[this.options.onClickPerson]
+    });
+
+    this.scene.init(function () {
+        console.info("2/3：【创建场景】成功！");
+        callback && callback();
+    });
+};
+
+LocationMap.createWebSocket = function () {
+    var options = this.options,
+        onOpenCallback = window[options.webSocket_onOpen],
+        onMessageCallback = window[options.webSocket_onMessage],
+        onCloseCallback = window[options.webSocket_onClose],
+        onErrorCallback = window[options.webSocket_onError],
+        webSocket = void 0;
+
+    onOpenCallback = onOpenCallback || function () {
+        console.info("【web socket】连接创建成功！");
+    };
+    onCloseCallback = onCloseCallback || function () {
+        console.info("【web socket】连接关闭！");
+    };
+    onErrorCallback = onErrorCallback || function () {
+        console.info("【web socket】连接出错！");
+    };
+
+    console.info("3/3：【创建 WebSocket 连接】...");
+
+    webSocket = new WebSocket(options.webSocket_url);
+
+    webSocket.onmessage = onMessageCallback;
+
+    webSocket.onopen = onOpenCallback;
+
+    webSocket.onerror = onErrorCallback;
+
+    webSocket.onclose = onCloseCallback;
+};
+
+function init() {
+    var $target = jQuery("[data-toggle=\"LocationMap\"]"),
+        options = void 0,
+        scene = void 0,
+        webSocket = void 0,
+        positionConverter = void 0;
+    if ($target.size() > 1) {
+        throw "不满足条件：target 元素有且仅有一个。";
+    }
+
+    options = $target.data("options");
+
+    positionConverter = window[options.positionConverter];
+
+    if (jQuery.isFunction(positionConverter)) {
+        _Config.Config.convertPosition = positionConverter;
+    }
+
+    ["webSocket_url", "webSocket_onMessage", "personInfoListUrl", "resourcesDir"].forEach(function (propName) {
+        if (!options.hasOwnProperty(propName)) {
+            throw "未指定【" + propName + "】参数";
+        }
+    });
+
+    // 1. 请求人员信息列表
+    console.info("1/3：【请求人员信息列表】...");
+    _Config.Config.personInfoListUrl = options.personInfoListUrl;
+    _Config.Config.requestPersonInfoList(function () {
+        console.info("1/3：【请求人员信息列表】成功！");
+        createScene();
+    }, function () {
+        console.error("1/3：【请求人员信息列表】失败！");
+    });
+
+    // 2. 创建场景
+    function createScene() {
+        console.info("2/3：【创建场景】...");
+        scene = new _Scene.Scene($target.get(0), {
+            resourcesDir: options.resourcesDir,
+            onClickPerson: window[options.onClickPerson]
+        });
+
+        LocationMap.scene = scene;
+
+        scene.init(function () {
+            console.info("2/3：【创建场景】成功！");
+            doWebSocket();
+        });
+    }
+
+    // 3. 创建 WebSocket 连接
+    function doWebSocket() {
+        var onOpenCallback = window[options.webSocket_onOpen],
+            onMessageCallback = window[options.webSocket_onMessage],
+            onCloseCallback = window[options.webSocket_onClose],
+            onErrorCallback = window[options.webSocket_onError];
+
+        onOpenCallback = onOpenCallback || function () {
+            console.info("【web socket】连接创建成功！");
+        };
+        onCloseCallback = onCloseCallback || function () {
+            console.info("【web socket】连接关闭！");
+        };
+        onErrorCallback = onErrorCallback || function () {
+            console.info("【web socket】连接出错！");
+        };
+
+        console.info("3/3：【创建 WebSocket 连接】...");
+
+        webSocket = new WebSocket(options.webSocket_url);
+
+        webSocket.onmessage = onMessageCallback;
+
+        webSocket.onopen = onOpenCallback;
+
+        webSocket.onerror = onErrorCallback;
+
+        webSocket.onclose = onCloseCallback;
+    }
+}
+
+jQuery(document).ready(function () {
+    LocationMap.init();
+});
+
+LocationMap.markPosition = function (position) {
+    LocationMap.scene.setCharacter(position);
+};
+
+window.LocationMap = {
+    markPosition: LocationMap.markPosition,
+    getPersonInfoById: _Config.Config.getPersonInfoById
+};
 
 /***/ }),
 /* 4 */
@@ -11733,7 +11921,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Scene = undefined;
 
-var _Config = __webpack_require__(0);
+var _Config = __webpack_require__(1);
 
 var _Character = __webpack_require__(5);
 
@@ -11743,14 +11931,16 @@ var _Character = __webpack_require__(5);
 
 var PIXI = __webpack_require__(2);
 
-var jQuery = __webpack_require__(1);
+var jQuery = __webpack_require__(0);
 
 /**
  * @description 构造函数
  * @constructor
- * @param options { {targetId: String}? }
+ * @param target {HTMLElement}
+ * @param options { {resourcesDir: String}? }
  */
-function Scene(options) {
+function Scene(target, options) {
+    this.target = target;
     this.getOptions(options);
     this._declare();
 }
@@ -11759,6 +11949,12 @@ function Scene(options) {
  * @description 默认参数
  */
 Scene.prototype.defaults = {
+    /** 资源目录 */
+    resourcesDir: "./",
+    /** 点击人员标签时执行的全局函数 */
+    onClickPerson: function onClickPerson(position) {
+        console.info("【标签被点击】" + JSON.stringify(position));
+    },
     /** 资源 */
     resources: [
     // 地面
@@ -11825,7 +12021,7 @@ Scene.prototype._declare = function () {
      * @type {HTMLElement | null}
      * @private
      */
-    this._container = document.getElementById(this.getOptions().targetId);
+    this._container = this.target;
 
     /**
      * @description 根容器
@@ -11833,13 +12029,6 @@ Scene.prototype._declare = function () {
      * @private
      */
     this._stage = null;
-
-    /**
-     * @description 地面
-     * @type {PIXI.Sprite}
-     * @private
-     */
-    // this._groundSprite = null;
 
     /**
      * @description 角色容器
@@ -11947,7 +12136,10 @@ Scene.prototype.createCharacter = function (options) {
         this.updateCharacter(options);
         return;
     }
-    character = new _Character.Character(this._charactersContainer, options);
+
+    character = new _Character.Character(this._charactersContainer, jQuery.extend(options, {
+        onClick: this.options.onClickPerson
+    }));
 
     character.create();
 
@@ -12085,7 +12277,16 @@ Scene.prototype.update = function () {
  */
 Scene.prototype._loadResources = function () {
     var _this = this,
+        resourcesDir = this.options.resourcesDir,
         count = 0;
+
+    if (/\/$/.test(resourcesDir)) {
+        resourcesDir += "/";
+    }
+
+    this.getOptions().resources.forEach(function (item) {
+        item.url = resourcesDir + item.url;
+    });
 
     this._loader.add(this.getOptions().resources).on("progress", function loadProgressHandler(loader, resource) {
         +function (progress, name) {
@@ -12251,7 +12452,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Character = undefined;
 
-var _Config = __webpack_require__(0);
+var _Config = __webpack_require__(1);
 
 /**
  * @fileOverview 角色
@@ -12260,7 +12461,7 @@ var _Config = __webpack_require__(0);
 
 var PIXI = __webpack_require__(2);
 
-var jQuery = __webpack_require__(1);
+var jQuery = __webpack_require__(0);
 
 /**
  * @description 构造函数
@@ -12275,7 +12476,11 @@ function Character(charactersContainer, options) {
  * @description 默认参数
  * @type {{}}
  */
-Character.prototype.defaults = {};
+Character.prototype.defaults = {
+    onClick: function onClick() {
+        console.info("被点击了");
+    }
+};
 
 /**
  * @description 声明
@@ -12343,7 +12548,8 @@ Character.prototype._declare = function (options) {
  * @description 创建
  */
 Character.prototype.create = function () {
-    var pixiSprite = void 0,
+    var _this = this,
+        pixiSprite = void 0,
         pixiText = void 0,
         personInfo = this.personInfo = _Config.Config.getPersonInfoById(this.getOptions().id),
         color = _Config.Config.getColor(personInfo.type),
@@ -12384,8 +12590,7 @@ Character.prototype.create = function () {
     characterContainer.buttonMode = true;
 
     characterContainer.on("pointerdown", function () {
-        // alert( "【" + personInfo.id + ", " + personInfo.name + "】被点击了！" );
-        jQuery(document).trigger("pku_click_character", personInfo);
+        _this.options.onClick(_this.options);
     });
 
     this.charactersContainer.addChild(characterContainer);
@@ -13797,3 +14002,4 @@ $.fn.panzoom = function (options) {
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=locationMap.js.map

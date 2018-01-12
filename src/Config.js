@@ -54,35 +54,19 @@ let Config = {
     ]
 };
 
-/**
- * @description 初始化
- * @param options {Object}
- * @param callback {Function}
- * @public
- */
-Config.init = function ( options, callback ) {
-
-    jQuery.extend( this, options );
-
-
-    this.getPersonInfoList( callback );
-
-    return this;
-};
-
 
 /**
  * @description 获取人员信息列表
- * @param callback {Function?}
- * @param isSync {Boolean?} 是否同步
+ * @param doneCallback {Function?}
+ * @param failCallback {Function?}
  * @public
+ * @deprecated
  */
-Config.getPersonInfoList = function ( callback, isSync ) {
+Config.getPersonInfoList = function ( doneCallback, failCallback ) {
     let
         _this = this
     ;
     jQuery.ajax( {
-        async: !isSync,
         url: this.personInfoListUrl,
         method: "GET",
         cache: false,
@@ -97,16 +81,24 @@ Config.getPersonInfoList = function ( callback, isSync ) {
                 data = Config.handlePersonInfoResponse( data );
             }
             _this._personInfoDic = data;
-            callback && callback();
+            doneCallback && doneCallback();
         }
         else {
             throw "获取人员信息列表 失败！";
         }
     } ).fail( function () {
         console.error( "获取人员信息列表 失败！" );
+        failCallback && failCallback();
     } );
 };
 
+/**
+ * @description 获取人员信息列表
+ * @param callback {Function}
+ * @param isSync {Boolean?} 是否同步
+ * @public
+ */
+Config.requestPersonInfoList = Config.getPersonInfoList;
 
 /**
  * @description 根据id获取人员名称

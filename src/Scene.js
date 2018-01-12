@@ -14,9 +14,11 @@ import {Character} from  "./Character" ;
 /**
  * @description 构造函数
  * @constructor
- * @param options { {targetId: String}? }
+ * @param target {HTMLElement}
+ * @param options { {resourcesDir: String}? }
  */
-function Scene( options ) {
+function Scene( target, options ) {
+    this.target = target;
     this.getOptions( options );
     this._declare();
 }
@@ -25,6 +27,12 @@ function Scene( options ) {
  * @description 默认参数
  */
 Scene.prototype.defaults = {
+    /** 资源目录 */
+    resourcesDir: "./",
+    /** 点击人员标签时执行的全局函数 */
+    onClickPerson: function ( position ) {
+        console.info( "【标签被点击】" + JSON.stringify( position ) );
+    },
     /** 资源 */
     resources: [
         // 地面
@@ -43,6 +51,7 @@ Scene.prototype.defaults = {
         { name: "suspect_woman", url: "images/character/suspect_woman.png" }
     ]
 };
+
 
 /**
  * @description 缓存
@@ -92,7 +101,7 @@ Scene.prototype._declare = function () {
      * @type {HTMLElement | null}
      * @private
      */
-    this._container = document.getElementById( this.getOptions().targetId );
+    this._container = this.target;
 
 
     /**
@@ -101,13 +110,6 @@ Scene.prototype._declare = function () {
      * @private
      */
     this._stage = null;
-
-    /**
-     * @description 地面
-     * @type {PIXI.Sprite}
-     * @private
-     */
-    // this._groundSprite = null;
 
     /**
      * @description 角色容器
@@ -216,7 +218,10 @@ Scene.prototype.createCharacter = function ( options ) {
         this.updateCharacter( options );
         return;
     }
-    character = new Character( this._charactersContainer, options );
+
+    character = new Character( this._charactersContainer, jQuery.extend( options, {
+        onClick: this.options.onClickPerson
+    }) );
 
     character.create();
 
@@ -365,8 +370,17 @@ Scene.prototype.update = function () {
 Scene.prototype._loadResources = function () {
     let
         _this = this,
+        resourcesDir = this.options.resourcesDir,
         count = 0
     ;
+
+    if ( /\/$/.test( resourcesDir ) ) {
+        resourcesDir += "/";
+    }
+
+    this.getOptions().resources.forEach( function ( item ) {
+        item.url = resourcesDir + item.url;
+    } );
 
     this._loader
         .add( this.getOptions().resources )

@@ -16,29 +16,18 @@
 
 <div class="myWrapper" style="width: 760px; height: 1080px; background: gray;">
 
-    <div data-toggle="LocationMap"
+    <div style="width: 650px; height: 1920px;"
+         data-toggle="LocationMap"
          data-options='{
-                "canvas": {
-                    "width": 650,
-                    "height": 1920
-                },
-                "websocket": {
-                    "url": "ws://localhost:8080/pkui/noauth/websocket/getPosition",
-                    "onopen": "establishSocketCallback",
-                    "onmessage": "receivedMessageCallback",
-                    "onclose": "closeSocketCallback"
-                },
+                "webSocket_url": "ws://localhost:8080/pkui/noauth/websocket/getPosition",
+                "webSocket_onOpen": "establishSocketCallback",
+                "webSocket_onMessage": "receivedMessageCallback",
+                "webSocket_onClose": "closeSocketCallback",
+                "webSocket_onError": "socketErrorCallback",
                 "personInfoListUrl": "../test/personInfoListData.json",
-                "onClickPerson", "clickPersonCallback",
-                "resources": [
-                    { "name": "ground", "url": "asset/images/scene/ground_650x1920_dark.png" },
-                    { "name": "ordinary_man", "url": "asset/images/character/v4/ordinary_man.png" },
-                    { "name": "ordinary_woman", "url": "asset/images/character/v4/ordinary_woman.png" },
-                    { "name": "police_man", "url": "asset/images/character/v4/police_man.png" },
-                    { "name": "police_woman", "url": "asset/images/character/v4/police_woman.png" },
-                    { "name": "suspect_man", "url": "asset/images/character/v4/suspect_man.png" },
-                    { "name": "suspect_woman", "url": "asset/images/character/v4/suspect_woman.png" }
-                ]
+                "onClickPerson": "clickPersonCallback",
+                "resourcesDir": "./asset/",
+                "positionConverter": "positionConverter"
              }'
 
     >
@@ -49,29 +38,37 @@
 <script>
 
     // CAD图坐标 转 2D坐标
-    window.LocationMap.Config.convertPosition = function ( pos ) {
+    function positionConverter ( pos ) {
         var
             cad_x = pos.x,
-            cad_y = pos.y
+            cad_y = pos.y,
+            x,
+            y
         ;
 
+        x = ( cad_x - 962 ) / 26.225806451612904 + 72;
+        y = ( cad_y - 714 ) / -26.16446124763705 + 606;
+
         return {
-            y: ( cad_x - 962 ) / 26.225806451612904 + 72,
-            x: ( cad_y - 714 ) / -26.16446124763705 + 606
+            x: y,
+            y: -(x -1920)
         };
-    };
-
-    function establishSocketCallback() {
-
     }
+
     function receivedMessageCallback(event) {
-
+        window.LocationMap();
     }
-    function closeSocketCallback() {
 
+    function clickPersonCallback( position ) {
+        console.info( position );
     }
-    function onClickPerson( personInfo ) {
 
+    function socketErrorCallback() {
+
+        LocationMap.markPosition( { cmd: 2, id: "56780", x: 24824, y: 8269 } );
+        LocationMap.markPosition( { cmd: 2, id: "56781", x: 2940, y: 12564 } );
+        LocationMap.markPosition( { cmd: 2, id: "56782", x: 32630, y: 13000 } );
+        LocationMap.markPosition( { cmd: 2, id: "56783", x: 33518, y: 2137 } );
     }
 
 

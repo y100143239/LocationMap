@@ -92,7 +92,7 @@
 
     设
         画布尺寸为 w * h，
-            旋转之前的任意一点(x,y)对应旋转之后的(x’,y’),
+        旋转之前的任意一点(x,y)对应旋转之后的(x’,y’),
     则
         x’= y
         y’= -(x-w)
@@ -121,5 +121,45 @@
   * `zhian-0719-2.dxf` 原始CAD图。不规范，无法导入酷家乐直接使用。
   * `zhian-0719-2.dwg` 对原始CAD图进行重画得到。
   * `坐标轴转换.psd` 将背景图逆时针旋转90°后，坐标转换示意图
+  
+## 7. 使用
+ 
+**全局变量**
+
+`window.LocationMap`
+
+**API**
+
+`LocationMap.init( options )`
+
+ * 作用：初始化 
+ * 参数：如下
+
+
+`LocationMap.setCharacter( position )`
+
+ * 作用：在画布上设置位置标签
+ * 参数：如下
+
+
+`LocationMap.Config.setPositionConverter( converterFunction )`
+
+ * 作用：设置坐标转换器，对`LocationMap.setCharacter( position )`中的`position`进行转换。
+ * 参数：如下
+
+
+`LocationMap.Config.getPersonInfoById( id )`
+ 
+ * 作用：根据人员ID获取人员信息
+
+    
+`LocationMap.Config.requestPersonInfoList( callback, isSync )`
+
+ * 作用：请求人员信息列表
+ 
+
+ 
+
+ 
  
 

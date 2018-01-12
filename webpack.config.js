@@ -8,7 +8,10 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
 
-    // devtool: 'inline-source-map',
+    // dev
+    // devtool: 'cheap-module-eval-source-map',
+    // product
+    devtool: 'cheap-module-source-map',
 
     externals: {
         jquery: 'jQuery'
