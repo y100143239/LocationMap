@@ -10,6 +10,7 @@ module.exports = {
 
     // dev
     // devtool: 'cheap-module-eval-source-map',
+
     // product
     devtool: 'cheap-module-source-map',
 

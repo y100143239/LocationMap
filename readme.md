@@ -7,6 +7,9 @@
         - [5.1 CAD图坐标转PIXI.JS背景图坐标](#51-cad%E5%9B%BE%E5%9D%90%E6%A0%87%E8%BD%ACpixijs%E8%83%8C%E6%99%AF%E5%9B%BE%E5%9D%90%E6%A0%87)
         - [5.2 PIXI.JS背景图逆时针旋转90°](#52-pixijs%E8%83%8C%E6%99%AF%E5%9B%BE%E9%80%86%E6%97%B6%E9%92%88%E6%97%8B%E8%BD%AC90%C2%B0)
     - [6. 文档](#6-%E6%96%87%E6%A1%A3)
+    - [7. 使用](#7-%E4%BD%BF%E7%94%A8)
+    - [8. 使用](#8-%E4%BD%BF%E7%94%A8)
+    - [9. 补充](#9-%E8%A1%A5%E5%85%85)
     
 # 人员位置图——治安
 
@@ -21,7 +24,7 @@
 ## 3. 演示
 
  * [治安-横版](https://forwardnow.github.io/LocationMap/dist/index.html)
- * [治安-竖版](https://forwardnow.github.io/LocationMap/dist/index_vertical_3.html)
+ * [治安-竖版](https://forwardnow.github.io/LocationMap/dist/index_vertical_2.html)
 
 ## 4. PIXI.JS背景图
 
@@ -120,7 +123,6 @@
   * `ground_vertical.psd` 对`ground.psd`逆时针旋转90°后得到的2D效果图。
   * `zhian-0719-2.dxf` 原始CAD图。不规范，无法导入酷家乐直接使用。
   * `zhian-0719-2.dwg` 对原始CAD图进行重画得到。
-  * `坐标轴转换.psd` 将背景图逆时针旋转90°后，坐标转换示意图
   
 ## 7. 使用
  
@@ -128,38 +130,132 @@
 
 `window.LocationMap`
 
+
 **API**
 
-`LocationMap.init( options )`
-
- * 作用：初始化 
- * 参数：如下
-
-
-`LocationMap.setCharacter( position )`
-
- * 作用：在画布上设置位置标签
- * 参数：如下
-
-
-`LocationMap.Config.setPositionConverter( converterFunction )`
-
- * 作用：设置坐标转换器，对`LocationMap.setCharacter( position )`中的`position`进行转换。
- * 参数：如下
-
-
-`LocationMap.Config.getPersonInfoById( id )`
+    /**
+     * @description 在地图上标记位置
+     * @param position {{cmd: number, id: string, x: number, y: number}}
+     */
+    LocationMap.markPosition( position )
  
- * 作用：根据人员ID获取人员信息
+    /*
+     * @description 根据id获取人员信息
+     * @param id {String}
+     * @return { {id:String, name: String, type: String} }
+     */
+    LocationMap.getPersonInfoById( id )
 
+**缩放与拖拽**
+
+ * 滚动鼠标滚轮可以缩放画布元素
+ * 按住鼠标左键不动可拖拽画布的位置 
+
+## 8. 使用
+
+参考：`dist/index_vertical_2.html`
+
+    <!-- 依赖 jQuery -->
+    <script src="../dep/jquery/2.2.4/jquery.js"></script>
+    <!-- 核心文件 -->
+    <script src="./asset/js/locationMap.js"></script>
     
-`LocationMap.Config.requestPersonInfoList( callback, isSync )`
-
- * 作用：请求人员信息列表
+    <div class="container" style="width: 760px; height: 1080px; background: gray;">
+    
+        <!--
+            【style="width: 650px; height: 1920px;"】设置画布的尺寸
+            【data-toggle="LocationMap"】标记为“LocationMap”，当页面DOM树构建完毕后 会对其进行初始化。
+            【data-options】设置参数
+            【webSocket_url】WebSocket，需要连接的URL
+            【webSocket_onOpen】WebSocket，建立连接后的回调函数（名称）
+            【webSocket_onMessage】WebSocket，接收到消息后的回调函数（名称）
+            【webSocket_onClose】WebSocket，关闭连接后的回调函数（名称）
+            【webSocket_onError】WebSocket，连接出错后的回调函数（名称）
+            【personInfoListUrl】请求 人员信息列表 的URL
+            【onClickPerson】点击人员位置标签后的回调函数（名称）
+            【resourcesDir】资源目录
+            【positionConverter】转换器，将服务器推送过来的坐标进行转换的函数（名称）
+        -->
+        <div style="width: 650px; height: 1920px;"
+             data-toggle="LocationMap"
+             data-options='{
+                    "webSocket_url": "ws://localhost:8080/pkui/noauth/websocket/getPosition",
+                    "webSocket_onOpen": "establishSocketCallback",
+                    "webSocket_onMessage": "receivedMessageCallback",
+                    "webSocket_onClose": "closeSocketCallback",
+                    "webSocket_onError": "socketErrorCallback",
+                    "personInfoListUrl": "../test/personInfoListData.json",
+                    "onClickPerson": "clickPersonCallback",
+                    "resourcesDir": "./asset/",
+                    "positionConverter": "positionConverter"
+                 }'
+    
+        >
+        </div>
+    
+    </div>
+    
+    <script>
+    
+        /**
+         * @description CAD图坐标 转 2D坐标
+         * @param pos
+         * @return {{x: number, y: number}}
+         */
+        function positionConverter ( pos ) {
+            var
+                cad_x = pos.x,
+                cad_y = pos.y,
+                x,
+                y
+            ;
+    
+            x = ( cad_x - 962 ) / 26.225806451612904 + 72;
+            y = ( cad_y - 714 ) / -26.16446124763705 + 606;
+    
+            return {
+                x: y,
+                y: -(x -1920)
+            };
+        }
+    
+        /**
+         * @description 连接 web socket 后，服务器发送数据后的回调函数
+         * @param event
+         */
+        function receivedMessageCallback( event ) {
+    
+        }
+    
+        /**
+         * @description 点击 位置标签后 的回调函数
+         * @param position {{id: string, name: string, x: number, y: number}}
+         * @param position.id {{string}} 人员ID
+         * @param position.name {{string}} 人员名称
+         * @param position.x {{number}} 服务器返回的X坐标
+         * @param position.y {{number}} 服务器返回的Y坐标
+         */
+        function clickPersonCallback( position ) {
+            console.info( position );
+        }
+    
+        /**
+         * @description web socket 连接出错后的回调函数
+         */
+        function socketErrorCallback() {
+    
+            LocationMap.markPosition( { cmd: 2, id: "56780", x: 24824, y: 8269 } );
+            LocationMap.markPosition( { cmd: 2, id: "56781", x: 2940, y: 12564 } );
+            LocationMap.markPosition( { cmd: 2, id: "56782", x: 32630, y: 13000 } );
+            LocationMap.markPosition( { cmd: 2, id: "56783", x: 33518, y: 2137 } );
+        }
+    
+    
+    </script> 
  
 
- 
 
- 
- 
+## 9. 补充
 
+CAD图的尺寸精度为mm（毫米），服务器推送过来的坐标精度为cm（厘米）。
+所以转换器里的坐标数值 应该 除以10。

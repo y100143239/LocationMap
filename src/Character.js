@@ -3,11 +3,11 @@
  * @author 吴钦飞（wuqinfei@qq.com）
  */
 
-const PIXI = require( "../dep/pixi/4.6.1/pixi" );
+const PIXI = require( "../dep/pixi/4.6.1/pixi.min" );
 
 const jQuery = require("jquery");
 
-import {Config} from  "./Config" ;
+const Config = require( "./Config" );
 
 
 
@@ -100,7 +100,7 @@ Character.prototype._declare = function ( options ) {
  * @description 创建
  */
 Character.prototype.create = function () {
-    let
+    var
         _this = this,
         pixiSprite,
         pixiText,
@@ -146,7 +146,13 @@ Character.prototype.create = function () {
     characterContainer.buttonMode = true;
 
     characterContainer.on( "pointerdown", function () {
-        _this.options.onClick( _this.options );
+        var options = _this.options;
+        _this.options.onClick( {
+            id: options.id,
+            name: personInfo.name,
+            x: options.x,
+            y: options.y
+        } );
     } );
 
     this.charactersContainer.addChild( characterContainer );
@@ -155,7 +161,7 @@ Character.prototype.create = function () {
 };
 
 Character.prototype.update = function () {
-    let
+    var
         position_CAD = this.position_CAD
     ;
 
@@ -200,7 +206,7 @@ Character.prototype.updatePixiPosition = function () {
  * @description 更新角色的name
  */
 Character.prototype.updateCharacterName = function () {
-    let
+    var
         characterContainer,
         color,
         pixiSprite,
@@ -270,7 +276,7 @@ Character.prototype.show = function () {
  * @return {{}}
  */
 Character.prototype.getOptions = function ( options ) {
-    let
+    var
         propName
     ;
     if ( options ) {
@@ -292,4 +298,4 @@ Character.prototype.getOptions = function ( options ) {
     return this.options;
 };
 
-export {Character};
+module.exports = Character;

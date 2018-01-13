@@ -6,7 +6,7 @@
 const jQuery = require("jquery");
 
 
-let Config = {
+var Config = {
 
     isInit: true,
 
@@ -63,7 +63,7 @@ let Config = {
  * @deprecated
  */
 Config.getPersonInfoList = function ( doneCallback, failCallback ) {
-    let
+    var
         _this = this
     ;
     jQuery.ajax( {
@@ -72,7 +72,7 @@ Config.getPersonInfoList = function ( doneCallback, failCallback ) {
         cache: false,
         dataType: "json"
     } ).done( function ( responseData ) {
-        let
+        var
             data
         ;
         if ( responseData && responseData.success === true ) {
@@ -107,7 +107,7 @@ Config.requestPersonInfoList = Config.getPersonInfoList;
  * @public
  */
 Config.getNameById = function ( id ) {
-    let
+    var
         name = this.getPersonInfoById( id ).name
     ;
 
@@ -153,7 +153,7 @@ Config.getColor = function ( type ) {
  * @param pos { {x: number, y: number} }
  */
 Config.convertPosition = function ( pos ) {
-    let
+    var
         cad_x = pos.x,
         cad_y = pos.y
     ;
@@ -171,7 +171,7 @@ Config.convertPosition = function ( pos ) {
  * @param personInfoDic
  */
 Config.handlePersonInfoResponse = function ( personInfoDic ) {
-    let
+    var
         i,
         len,
         tagId,
@@ -248,4 +248,4 @@ Config.handlePersonInfoResponse = function ( personInfoDic ) {
     return fmtPersonInfoDic;
 };
 
-export {Config};
+module.exports = Config;

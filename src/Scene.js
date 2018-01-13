@@ -3,12 +3,12 @@
  */
 
 
-const PIXI = require( "../dep/pixi/4.6.1/pixi" );
+const PIXI = require( "../dep/pixi/4.6.1/pixi.min" );
 
 const jQuery = require("jquery");
 
-import {Config} from  "./Config" ;
-import {Character} from  "./Character" ;
+const Config = require( "./Config" );
+const Character = require( "./Character" );
 
 
 /**
@@ -209,7 +209,7 @@ Scene.prototype.setCharacter = function ( data ) {
  * @param options {{ id: String, x: Number, y: Number}}
  */
 Scene.prototype.createCharacter = function ( options ) {
-    let
+    var
         _this = this,
         character
     ;
@@ -239,7 +239,7 @@ Scene.prototype.createCharacter = function ( options ) {
  * @param options {{ id: String, x: Number, y: Number}}
  */
 Scene.prototype.updateCharacter = function ( options ) {
-    let
+    var
         character = this.CharacterCache.get( options.id )
     ;
     if ( !character ) {
@@ -255,7 +255,7 @@ Scene.prototype.updateCharacter = function ( options ) {
  * @param options {{ id: String, x: Number, y: Number }}
  */
 Scene.prototype.destroyCharacter = function ( options ) {
-    let
+    var
         character = this.CharacterCache.get( options.id ),
         _this = this
     ;
@@ -277,7 +277,7 @@ Scene.prototype.destroyCharacter = function ( options ) {
  * @description 重命名所有 name的值为id 的角色
  */
 Scene.prototype.renameCharacter = function () {
-    let
+    var
         cache = this.CharacterCache.cache,
         id,
         character
@@ -297,7 +297,7 @@ Scene.prototype.renameCharacter = function () {
  * @public
  */
 Scene.prototype.getOptions = function ( options ) {
-    let
+    var
         propName
     ;
     if ( options ) {
@@ -348,7 +348,7 @@ Scene.prototype.getRenderer = function () {
  * @public
  */
 Scene.prototype.update = function () {
-    let
+    var
         cache = this.CharacterCache.cache,
         id,
         character
@@ -368,7 +368,7 @@ Scene.prototype.update = function () {
  * @private
  */
 Scene.prototype._loadResources = function () {
-    let
+    var
         _this = this,
         resourcesDir = this.options.resourcesDir,
         count = 0
@@ -399,7 +399,7 @@ Scene.prototype._loadResources = function () {
  * @private
  */
 Scene.prototype._createProgressbar = function () {
-    let
+    var
         progressContainer,
         progress,
         progressbar,
@@ -453,7 +453,7 @@ Scene.prototype._createProgressbar = function () {
  * @private
  */
 Scene.prototype._setProgress = function ( percentage, msg ) {
-    let
+    var
         width,
         progressbar,
         _this = this
@@ -482,7 +482,7 @@ Scene.prototype._setProgress = function ( percentage, msg ) {
  * @private
  */
 Scene.prototype._createScene = function () {
-    let
+    var
         stage = this.getStage(),
         resources = PIXI.loader.resources,
         ground,
@@ -505,7 +505,7 @@ Scene.prototype._createScene = function () {
  * @private
  */
 Scene.prototype._animate = function () {
-    let
+    var
         _this = this
     ;
 
@@ -527,14 +527,14 @@ Scene.prototype._animate = function () {
  * @private
  */
 Scene.prototype._addPanzoom = function () {
-    let
+    var
         $container = jQuery( this._container )
     ;
 
     $container.panzoom();
 
     $container.parent().on('mousewheel', function( e ) {
-        let
+        var
             delta,
             zoomOut
         ;
@@ -550,4 +550,4 @@ Scene.prototype._addPanzoom = function () {
 };
 
 
-export {Scene};
+module.exports = Scene;
